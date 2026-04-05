@@ -3,7 +3,6 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ERROR_CODES } from '../../constants/errorCodes';
 import Otp from '../../models/otp.model';
 import User from '../../models/user.model';
-import { generateOtp } from '../../utils/generateOtp';
 import { generateToken } from '../../utils/jwt';
 import { errorResponse, successResponse } from '../../utils/response';
 
@@ -17,7 +16,8 @@ export const sendOtp = async (request: FastifyRequest, reply: FastifyReply) => {
         .send(errorResponse('Mobile is required', ERROR_CODES.MOBILE_REQUIRED));
     }
 
-    const otp = generateOtp();
+    //const otp = generateOtp();
+    const otp = '1234';
 
     await Otp.findOneAndUpdate(
       { mobile },

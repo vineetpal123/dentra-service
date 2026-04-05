@@ -4,7 +4,12 @@ import dotenv from 'dotenv';
 import Fastify from 'fastify';
 import connectDB from './config/db';
 
+import appointmentsRoutes from './modules/appointments/appointments.routes';
 import authRoutes from './modules/auth/auth.routes';
+import businessHoursRoutes from './modules/businessHours/businessHours.routes';
+import dashboardRoutes from './modules/dashboard/dashboard.routes';
+import patientsRoutes from './modules/patients/patients.routes';
+import settingsRoutes from './modules/settings/settings.routes';
 
 dotenv.config();
 
@@ -17,6 +22,7 @@ if (!JWT_SECRET || !MONGO_URI) {
 }
 
 const app = Fastify({ logger: true });
+const API_PREFIX = '/api/v1';
 
 // plugins
 app.register(cors, { origin: true });
@@ -24,6 +30,11 @@ app.register(jwt, { secret: JWT_SECRET });
 
 // routes
 app.register(authRoutes, { prefix: '/auth' });
+app.register(dashboardRoutes, { prefix: API_PREFIX });
+app.register(appointmentsRoutes, { prefix: API_PREFIX });
+app.register(patientsRoutes, { prefix: API_PREFIX });
+app.register(settingsRoutes, { prefix: API_PREFIX });
+app.register(businessHoursRoutes, { prefix: API_PREFIX });
 
 app.get('/', async () => {
   return { message: 'API running 🚀' };
