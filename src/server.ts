@@ -32,8 +32,9 @@ app.get('/', async () => {
 const start = async () => {
   try {
     await connectDB();
-    await app.listen({ port: 8000 });
-    console.log('Server running at http://localhost:8000');
+    const port = process.env.PORT ? parseInt(process.env.PORT) : 8000;
+    await app.listen({ port });
+    console.log(`Server running at http://localhost:${port}`);
   } catch (err) {
     app.log.error(err);
     process.exit(1);
