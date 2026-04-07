@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { JwtUser } from '../types/auth';
 
 export const generateToken = (user: any) => {
   return jwt.sign(
@@ -13,5 +14,5 @@ export const generateToken = (user: any) => {
 };
 
 export const verifyToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_SECRET!);
+  return jwt.verify(token, process.env.JWT_SECRET!) as JwtUser;
 };

@@ -6,6 +6,8 @@ import { errorResponse, successResponse } from '../../utils/response';
 import { Otp } from './models/otp.model';
 import { Tenant } from './models/tenant.model';
 import { User } from './models/user.model';
+import { SendOtpInput } from './schemas/sendOtp.schema';
+import { VerifyOtpInput } from './schemas/verifyOtp.schema';
 
 export const sendOtp = async (
   request: FastifyRequest<{ Body: SendOtpInput }>,
@@ -13,10 +15,6 @@ export const sendOtp = async (
 ) => {
   try {
     const { mobile } = request.body;
-
-    // Validation is handled by Fastify schema, but you can add manual if needed
-    // const validation = sendOtpSchema.safeParse(request.body);
-    // if (!validation.success) return reply.status(400).send(errorResponse('Invalid input', ERROR_CODES.INVALID_INPUT));
 
     if (!mobile) {
       return reply
