@@ -10,6 +10,7 @@ import businessHoursRoutes from './modules/businessHours/businessHours.routes';
 import dashboardRoutes from './modules/dashboard/dashboard.routes';
 import patientsRoutes from './modules/patients/patients.routes';
 import settingsRoutes from './modules/settings/settings.routes';
+import userRoutes from './modules/users/user.routes';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.register(appointmentsRoutes, { prefix: API_PREFIX });
 app.register(patientsRoutes, { prefix: API_PREFIX });
 app.register(settingsRoutes, { prefix: API_PREFIX });
 app.register(businessHoursRoutes, { prefix: API_PREFIX });
+app.register(userRoutes, { prefix: API_PREFIX });
 
 app.get('/', async () => {
   return { message: 'API running 🚀' };

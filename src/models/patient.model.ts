@@ -1,0 +1,34 @@
+import mongoose, { Document, Schema } from 'mongoose';
+
+export interface IPatient extends Document {
+  tenantId: mongoose.Types.ObjectId;
+  name: string;
+  mobile?: string;
+  gender?: string;
+  age?: number;
+  createdBy: mongoose.Types.ObjectId;
+}
+
+const patientSchema = new Schema<IPatient>(
+  {
+    tenantId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Tenant',
+      required: true,
+      index: true,
+    },
+
+    name: { type: String, required: true },
+    mobile: String,
+    gender: String,
+    age: Number,
+
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  },
+  { timestamps: true },
+);
+
+export const Patient = mongoose.model<IPatient>('Patient', patientSchema);

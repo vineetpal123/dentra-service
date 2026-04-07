@@ -1,19 +1,24 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+import jwt from 'jsonwebtoken';
 import { ERROR_CODES } from '../constants/errorCodes';
-import { verifyToken } from '../utils/jwt';
 import { errorResponse } from '../utils/response';
 
 export const authMiddleware = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     const authHeader = req.headers.authorization;
-
+    console.log('Authorization Header:', authHeader);
     if (!authHeader) {
       return reply.status(401).send(errorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED));
     }
 
-    const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[2];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+      userId: string;
+      tenantId: string;
+      role: 'admin' | 'doctor' | 'staff';
+    };
 
-    const decoded: any = verifyToken(token);
+    console.log('Decoded Token:', decoded);
 
     (req as any).user = decoded;
   } catch (err) {

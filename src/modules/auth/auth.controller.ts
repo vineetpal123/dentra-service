@@ -1,14 +1,20 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { ERROR_CODES } from '../../constants/errorCodes';
-import Otp from '../../models/otp.model';
-import User from '../../models/user.model';
 import { generateToken } from '../../utils/jwt';
 import { errorResponse, successResponse } from '../../utils/response';
+import { Otp } from './models/otp.model';
+import { Tenant } from './models/tenant.model';
+import { User } from './models/user.model';
+import { SendOtpInput } from './schemas/sendOtp.schema';
+import { VerifyOtpInput } from './schemas/verifyOtp.schema';
 
-export const sendOtp = async (request: FastifyRequest, reply: FastifyReply) => {
+export const sendOtp = async (
+  request: FastifyRequest<{ Body: SendOtpInput }>,
+  reply: FastifyReply,
+) => {
   try {
-    const { mobile } = request.body as { mobile: string };
+    const { mobile } = request.body;
 
     if (!mobile) {
       return reply
@@ -36,12 +42,12 @@ export const sendOtp = async (request: FastifyRequest, reply: FastifyReply) => {
   }
 };
 
-export const verifyOtp = async (request: FastifyRequest, reply: FastifyReply) => {
+export const verifyOtp = async (
+  request: FastifyRequest<{ Body: VerifyOtpInput }>,
+  reply: FastifyReply,
+) => {
   try {
-    const { mobile, otp } = request.body as {
-      mobile: string;
-      otp: string;
-    };
+    const { mobile, otp } = request.body;
 
     const otpRecord: any = await Otp.findOne({ mobile });
 
@@ -59,8 +65,21 @@ export const verifyOtp = async (request: FastifyRequest, reply: FastifyReply) =>
 
     let user = await User.findOne({ mobile });
 
+    let tenant;
+
     if (!user) {
-      user = await User.create({ mobile });
+      tenant = await Tenant.create({
+        name: 'My Clinic',
+      });
+
+      user = await User.create({
+        mobile,
+        tenantId: tenant._id,
+        role: 'admin',
+        isApproved: true,
+      });
+      tenant.ownerId = user._id;
+      await tenant.save();
     }
 
     const token = generateToken(user);
