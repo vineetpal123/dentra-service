@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export type AppointmentStatus = 'booked' | 'cancelled' | 'completed' | 'no-show';
+export type AppointmentStatus = 'booked' | 'cancelled' | 'completed' | 'no-show' | 'draft';
 
 export interface IAppointment extends Document {
   tenantId: mongoose.Types.ObjectId;
@@ -11,6 +11,7 @@ export interface IAppointment extends Document {
   endTime: string;
   status: AppointmentStatus;
   notes?: string;
+  createdBy: mongoose.Types.ObjectId;
 }
 
 const appointmentSchema = new Schema<IAppointment>(
@@ -31,23 +32,27 @@ const appointmentSchema = new Schema<IAppointment>(
     doctorId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      required: false,
     },
 
-    date: { type: String, required: true },
+    date: { type: String, required: false },
 
-    startTime: String,
+    startTime: { type: String, required: false },
     endTime: String,
 
     status: {
       type: String,
-      enum: ['booked', 'cancelled', 'completed', 'no-show'],
-      default: 'booked',
+      enum: ['booked', 'cancelled', 'completed', 'no-show', 'draft'],
+      default: 'draft',
       index: true,
     },
-
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
     notes: String,
   },
+
   { timestamps: true },
 );
 
