@@ -8,6 +8,7 @@ export interface IUser extends Document {
   name?: string;
   role: UserRole;
   isApproved: boolean;
+  isDeleted: boolean;
 }
 
 const userSchema = new Schema<IUser>(
@@ -33,6 +34,11 @@ const userSchema = new Schema<IUser>(
     isApproved: {
       type: Boolean,
       default: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
   },
   { timestamps: true },

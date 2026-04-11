@@ -1,14 +1,24 @@
-import { createUser, deleteUser, getUserById, getUsers } from './user.controller';
+import { createUser, deleteUser, getUserById, getUsers, updateUser } from './user.controller';
 
 import { authMiddleware } from '../../middleware/auth.middleware';
+import { allowRoles } from '../../middleware/role.middleware';
 import { validate } from '../../utils/validate';
-import { createUserSchema, getUsersQuerySchema } from './schemas/user.schema';
+import {
+  createUserSchema,
+  getUsersQuerySchema,
+  updateUserSchema,
+  userParamSchema,
+} from './schemas/user.schema';
 
 export default async function (fastify: any) {
   fastify.post(
     '/users',
     {
-      preHandler: [authMiddleware, validate(createUserSchema)],
+      preHandler: [
+        authMiddleware,
+        allowRoles(['admin', 'doctor', 'staff']),
+        validate(createUserSchema),
+      ],
     },
     createUser,
   );
@@ -16,12 +26,43 @@ export default async function (fastify: any) {
   fastify.get(
     '/users',
     {
-      preHandler: [authMiddleware, validate(getUsersQuerySchema)],
+      preHandler: [
+        authMiddleware,
+        allowRoles(['admin', 'doctor', 'staff']),
+        validate(getUsersQuerySchema, 'query'),
+      ],
     },
     getUsers,
   );
 
-  fastify.get('/users/:id', { preHandler: authMiddleware }, getUserById);
+  fastify.get(
+    '/users/:id',
+    {
+      preHandler: [
+        authMiddleware,
+        allowRoles(['admin', 'doctor', 'staff']),
+        validate(userParamSchema, 'params'),
+      ],
+    },
+    getUserById,
+  );
 
-  fastify.delete('/users/:id', { preHandler: authMiddleware }, deleteUser);
+  fastify.put(
+    '/users/:id',
+    {
+      preHandler: [
+        authMiddleware,
+        allowRoles(['admin']),
+        validate(userParamSchema, 'params'),
+        validate(updateUserSchema),
+      ],
+    },
+    updateUser,
+  );
+
+  fastify.delete(
+    '/users/:id',
+    { preHandler: [authMiddleware, allowRoles(['admin']), validate(userParamSchema, 'params')] },
+    deleteUser,
+  );
 }

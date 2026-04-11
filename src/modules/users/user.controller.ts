@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { getUser } from '../../utils/getUser';
-import { User } from '../auth/models/user.model';
+import { User } from './models/user.model';
 import { CreateUserSchema } from './schemas/user.schema';
 
 export const createUser = async (
@@ -56,13 +56,21 @@ export const createUser = async (
 // 📄 GET USERS (with pagination)
 export async function getUsers(request: any, reply: FastifyReply) {
   try {
-    const { page = '1', limit = '10', role } = request.query;
+    const currentUser = request.user;
+    console.log('Get Users - Tenant ID:', request.user.tenantId);
+    const { page = '1', limit = '10', role, search } = request.query;
 
     const query: any = {
-      tenantId: request.user.tenantId,
+      tenantId: currentUser.tenantId,
+      isDeleted: false,
+      _id: { $ne: currentUser.id }, // Exclude self from list
     };
 
     if (role) query.role = role;
+
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
 
     const users = await User.find(query)
       .skip((Number(page) - 1) * Number(limit))
@@ -94,6 +102,7 @@ export async function getUserById(request: any, reply: FastifyReply) {
     const user = await User.findOne({
       _id: request.params.id,
       tenantId: request.user.tenantId,
+      isDeleted: false,
     });
 
     if (!user) {
@@ -112,20 +121,56 @@ export async function getUserById(request: any, reply: FastifyReply) {
   }
 }
 
+// ✏️ UPDATE USER
+export async function updateUser(request: any, reply: FastifyReply) {
+  const currentUser = request.user;
+
+  if (currentUser.role !== 'admin') {
+    return reply.code(403).send({
+      success: false,
+      errors: [{ code: 'FORBIDDEN', message: 'Admin only' }],
+    });
+  }
+
+  const user = await User.findOneAndUpdate(
+    {
+      _id: request.params.id,
+      tenantId: currentUser.tenantId,
+      isDeleted: false,
+    },
+    request.body,
+    { new: true },
+  );
+
+  if (!user) {
+    return reply.code(404).send({
+      success: false,
+      errors: [{ code: 'NOT_FOUND', message: 'User not found' }],
+    });
+  }
+
+  return reply.send({ success: true, data: user });
+}
+
 // ❌ DELETE USER (Admin only)
 export async function deleteUser(request: any, reply: FastifyReply) {
+  const currentUser = request.user;
   try {
-    if (request.user.role !== 'admin') {
+    if (currentUser.role !== 'admin') {
       return reply.code(403).send({
         success: false,
         errors: [{ code: 'FORBIDDEN', message: 'Admin only' }],
       });
     }
 
-    const user = await User.findOneAndDelete({
-      _id: request.params.id,
-      tenantId: request.user.tenantId,
-    });
+    const user = await User.findOneAndUpdate(
+      {
+        _id: request.params.id,
+        tenantId: currentUser.tenantId,
+      },
+      { isDeleted: true },
+      { new: true },
+    );
 
     if (!user) {
       return reply.code(404).send({

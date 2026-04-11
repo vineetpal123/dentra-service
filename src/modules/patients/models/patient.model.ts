@@ -7,6 +7,7 @@ export interface IPatient extends Document {
   gender?: string;
   age?: number;
   createdBy: mongoose.Types.ObjectId;
+  isDeleted: boolean;
 }
 
 const patientSchema = new Schema<IPatient>(
@@ -17,15 +18,18 @@ const patientSchema = new Schema<IPatient>(
       required: true,
       index: true,
     },
-
     name: { type: String, required: true },
     mobile: String,
     gender: String,
     age: Number,
-
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: 'User',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
     },
   },
   { timestamps: true },

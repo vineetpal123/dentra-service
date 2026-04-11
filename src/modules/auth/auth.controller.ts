@@ -3,9 +3,9 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ERROR_CODES } from '../../constants/errorCodes';
 import { generateToken } from '../../utils/jwt';
 import { errorResponse, successResponse } from '../../utils/response';
+import { User } from '../users/models/user.model';
 import { Otp } from './models/otp.model';
 import { Tenant } from './models/tenant.model';
-import { User } from './models/user.model';
 import { SendOtpInput } from './schemas/sendOtp.schema';
 import { VerifyOtpInput } from './schemas/verifyOtp.schema';
 
@@ -77,6 +77,7 @@ export const verifyOtp = async (
         tenantId: tenant._id,
         role: 'admin',
         isApproved: true,
+        isDeleted: false,
       });
       tenant.ownerId = user._id;
       await tenant.save();

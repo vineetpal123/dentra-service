@@ -2,9 +2,18 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { ZodError, ZodSchema } from 'zod';
 
 export const validate =
-  (schema: ZodSchema) => async (request: FastifyRequest, reply: FastifyReply) => {
+  (schema: ZodSchema, type: 'body' | 'query' | 'params' = 'body') =>
+  async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      request.body = schema.parse(request.body);
+      const data =
+        type === 'body' ? request.body : type === 'query' ? request.query : request.params;
+
+      const parsed = schema.parse(data);
+
+      // assign back parsed data
+      if (type === 'body') request.body = parsed;
+      if (type === 'query') request.query = parsed;
+      if (type === 'params') request.params = parsed;
     } catch (err) {
       if (err instanceof ZodError) {
         return reply.code(400).send({
@@ -17,15 +26,9 @@ export const validate =
         });
       }
 
-      // fallback error
       return reply.code(400).send({
         success: false,
-        errors: [
-          {
-            code: 'UNKNOWN_ERROR',
-            message: 'Invalid request',
-          },
-        ],
+        errors: [{ code: 'UNKNOWN_ERROR', message: 'Invalid request' }],
       });
     }
   };
