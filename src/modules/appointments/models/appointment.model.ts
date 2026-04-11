@@ -22,24 +22,21 @@ const appointmentSchema = new Schema<IAppointment>(
       required: true,
       index: true,
     },
-
     patientId: {
       type: Schema.Types.ObjectId,
       ref: 'Patient',
-      required: true,
+      required: false,
+      default: null,
     },
-
     doctorId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: false,
+      default: null,
     },
-
     date: { type: String, required: false },
-
     startTime: { type: String, required: false },
-    endTime: String,
-
+    endTime: { type: String, required: false },
     status: {
       type: String,
       enum: ['booked', 'cancelled', 'completed', 'no-show', 'draft'],

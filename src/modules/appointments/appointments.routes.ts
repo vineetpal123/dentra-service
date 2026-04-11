@@ -63,7 +63,7 @@ export default async function (fastify: any) {
     updateAppointment,
   );
 
-  fastify.patch(
+  fastify.delete(
     '/appointments/:id/cancel',
     {
       preHandler: [

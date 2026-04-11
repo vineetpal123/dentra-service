@@ -10,14 +10,23 @@ export async function createAppointment(request: any, reply: any) {
   try {
     const user = getUser(request);
 
-    let { patientId, doctorId, date, startTime } = request.body;
+    let { patientId, doctorId, date, startTime, endTime } = request.body;
 
+    if (!doctorId) doctorId = undefined;
+    if (!date) date = undefined;
+    if (!startTime) startTime = undefined;
+    if (!endTime) endTime = undefined;
+
+    console.log('Create Appointment Payload:', request.body);
     // ✅ handle new patient
     if (!patientId && request.body.patient) {
       const newPatient = await Patient.create({
         ...request.body.patient,
         tenantId: user.tenantId,
+        createdBy: user.id,
       });
+
+      console.log('Create newPatient:', newPatient);
 
       patientId = newPatient._id;
     }
@@ -25,6 +34,7 @@ export async function createAppointment(request: any, reply: any) {
     let status = 'draft';
     // 🔥 Conflict check
     if (doctorId && date && startTime) {
+      console.log('check existing-----------');
       // conflict check
       const existing = await Appointment.findOne({
         tenantId: user.tenantId,
@@ -33,7 +43,7 @@ export async function createAppointment(request: any, reply: any) {
         startTime,
         status: { $ne: 'cancelled' },
       });
-
+      console.log('Existing Appointment:', existing);
       if (existing) {
         return reply.code(400).send({
           success: false,
@@ -43,6 +53,17 @@ export async function createAppointment(request: any, reply: any) {
 
       status = 'booked';
     }
+    console.log('create appointment-----------', {
+      patientId,
+      doctorId,
+      date,
+      startTime,
+      tenantId: user.tenantId,
+      status,
+      endTime,
+      notes: request.body.notes,
+      createdBy: user?.id,
+    });
     const appointment = await Appointment.create({
       patientId,
       doctorId,
@@ -50,10 +71,16 @@ export async function createAppointment(request: any, reply: any) {
       startTime,
       tenantId: user.tenantId,
       status,
+      createdBy: user?.id,
+      endTime,
+      notes: request.body.notes,
     });
+
+    console.log('create appointment created-----------', appointment);
 
     return reply.send(successResponse('Api successful', appointment));
   } catch (err) {
+    console.log('Error creating appointment:', err);
     return reply.status(500).send(errorResponse('Server error', ERROR_CODES.SERVER_ERROR));
   }
 }
@@ -187,6 +214,7 @@ export async function cancelAppointment(request: any, reply: any) {
 
     return reply.send(successResponse('Api successful', { message: 'Appointment cancelled' }));
   } catch (err) {
+    console.log('Error cancelling appointment:', err);
     return reply.status(500).send(errorResponse('Server error', ERROR_CODES.SERVER_ERROR));
   }
 }

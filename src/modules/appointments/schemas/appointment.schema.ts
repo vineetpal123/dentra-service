@@ -1,13 +1,15 @@
 import { z } from 'zod';
+import { createPatientSchema } from '../../patients/schemas/patient.schema';
 
 // CREATE
 export const createAppointmentSchema = z.object({
-  patientId: z.string(),
+  patientId: z.string().optional(),
   doctorId: z.string().optional(),
   date: z.string(),
   startTime: z.string(),
   endTime: z.string(),
   notes: z.string().optional(),
+  patient: createPatientSchema.optional(), // For new patient creation
 });
 
 // UPDATE / RESCHEDULE
