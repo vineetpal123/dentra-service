@@ -11,7 +11,7 @@ export const authMiddleware = async (req: FastifyRequest, reply: FastifyReply) =
       return reply.status(401).send(errorResponse('Unauthorized', ERROR_CODES.UNAUTHORIZED));
     }
 
-    const token = authHeader.split(' ')[2];
+    const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
       userId: string;
       tenantId: string;
