@@ -13,6 +13,8 @@ export async function createPatient(
   try {
     const currentUser = getUser(request);
 
+    console.log('Creating patient with data:', request.body, 'for tenant:', currentUser.tenantId);
+
     const patient = await Patient.create({
       ...request.body,
       tenantId: currentUser.tenantId,

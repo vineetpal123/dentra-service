@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IPatient extends Document {
   tenantId: mongoose.Types.ObjectId;
   name: string;
-  mobile?: string;
+  phone?: string;
   gender?: string;
   age?: number;
   createdBy: mongoose.Types.ObjectId;
@@ -19,7 +19,7 @@ const patientSchema = new Schema<IPatient>(
       index: true,
     },
     name: { type: String, required: true },
-    mobile: String,
+    phone: String,
     gender: String,
     age: Number,
     createdBy: {

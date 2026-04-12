@@ -6,8 +6,8 @@ export const createAppointmentSchema = z.object({
   patientId: z.string().optional(),
   doctorId: z.string().optional(),
   date: z.string(),
-  startTime: z.string(),
-  endTime: z.string(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
   notes: z.string().optional(),
   patient: createPatientSchema.optional(), // For new patient creation
 });

@@ -106,9 +106,24 @@ export const getAppointments = async (request: any, reply: FastifyReply) => {
       .limit(limit)
       .sort({ date: -1 });
 
+    const formatted = appointments.map((appt: any) => ({
+      _id: appt._id,
+      date: appt.date,
+      patientId: appt.patientId?._id,
+      patient: appt.patientId?.name,
+      phone: appt.patientId?.phone,
+      startTime: appt.startTime,
+      endTime: appt.endTime,
+      status: appt.status,
+      doctorId: appt.doctorId?._id,
+      doctor: appt.doctorId?.name,
+    }));
+
     const total = await Appointment.countDocuments(query);
 
-    return reply.send(successResponse('Api successful', { appointments, total, page, limit }));
+    return reply.send(
+      successResponse('Api successful', { appointments: formatted, total, page, limit }),
+    );
   } catch (err) {
     return reply.status(500).send(errorResponse('Server error', ERROR_CODES.SERVER_ERROR));
   }

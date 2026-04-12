@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const createPatientSchema = z.object({
   name: z.string().min(2),
   phone: z.string().optional(),
-  age: z.number().optional(),
+  age: z.coerce.number().min(0).optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
 });
 
@@ -12,7 +12,7 @@ export const createPatientSchema = z.object({
 export const updatePatientSchema = z.object({
   name: z.string().min(2).optional(),
   phone: z.string().optional(),
-  age: z.number().optional(),
+  age: z.coerce.number().min(0).optional(),
   gender: z.enum(['male', 'female', 'other']).optional(),
 });
 

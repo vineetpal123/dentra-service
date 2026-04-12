@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const verifyOtpSchema = z.object({
-  mobile: z.string().min(10).max(15),
+  phone: z.string().min(10).max(15),
   otp: z.string().length(4), // Assuming 4-digit OTP
 });
 

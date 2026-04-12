@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export type UserRole = 'admin' | 'doctor' | 'staff';
 
 export interface IUser extends Document {
-  mobile: string;
+  phone: string;
   tenantId: mongoose.Types.ObjectId;
   name?: string;
   role: UserRole;
@@ -12,7 +12,7 @@ export interface IUser extends Document {
 
 const userSchema = new Schema<IUser>(
   {
-    mobile: { type: String, required: true, index: true },
+    phone: { type: String, required: true, index: true },
 
     tenantId: {
       type: Schema.Types.ObjectId,
@@ -39,6 +39,6 @@ const userSchema = new Schema<IUser>(
 );
 
 // Prevent duplicate user in same tenant
-userSchema.index({ mobile: 1, tenantId: 1 }, { unique: true });
+userSchema.index({ phone: 1, tenantId: 1 }, { unique: true });
 
 export const User = mongoose.model<IUser>('User', userSchema);

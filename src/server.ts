@@ -26,7 +26,13 @@ const app = Fastify({ logger: true });
 const API_PREFIX = '/api/v1';
 
 // plugins
-app.register(cors, { origin: true });
+app.register(cors, {
+  origin: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+});
+
 app.register(jwt, { secret: JWT_SECRET });
 
 // routes

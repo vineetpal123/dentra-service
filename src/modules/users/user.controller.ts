@@ -16,11 +16,11 @@ export const createUser = async (
       });
     }
 
-    const { mobile } = request.body;
+    const { phone } = request.body;
     const tenantId = requestedUser?.tenantId;
 
     const existing = await User.findOne({
-      mobile: mobile,
+      phone: phone,
       tenantId: tenantId,
     });
 

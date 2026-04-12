@@ -14,9 +14,9 @@ export const sendOtp = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { mobile } = request.body;
+    const { phone } = request.body;
 
-    if (!mobile) {
+    if (!phone) {
       return reply
         .status(400)
         .send(errorResponse('Mobile is required', ERROR_CODES.MOBILE_REQUIRED));
@@ -26,7 +26,7 @@ export const sendOtp = async (
     const otp = '1234';
 
     await Otp.findOneAndUpdate(
-      { mobile },
+      { phone },
       {
         otp,
         expiresAt: new Date(Date.now() + 5 * 60 * 1000),
@@ -47,9 +47,9 @@ export const verifyOtp = async (
   reply: FastifyReply,
 ) => {
   try {
-    const { mobile, otp } = request.body;
+    const { phone, otp } = request.body;
 
-    const otpRecord: any = await Otp.findOne({ mobile });
+    const otpRecord: any = await Otp.findOne({ phone });
 
     if (!otpRecord) {
       return reply.status(400).send(errorResponse('OTP not found', ERROR_CODES.OTP_NOT_FOUND));
@@ -63,7 +63,7 @@ export const verifyOtp = async (
       return reply.status(400).send(errorResponse('OTP expired', ERROR_CODES.OTP_EXPIRED));
     }
 
-    let user = await User.findOne({ mobile });
+    let user = await User.findOne({ phone });
 
     let tenant;
 
@@ -73,7 +73,7 @@ export const verifyOtp = async (
       });
 
       user = await User.create({
-        mobile,
+        phone,
         tenantId: tenant._id,
         role: 'admin',
         isApproved: true,
