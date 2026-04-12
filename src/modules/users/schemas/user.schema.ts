@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createUserSchema = z.object({
-  mobile: z.string().regex(/^[1-9]\d{9}$/, 'Invalid mobile number'),
+  phone: z.string().regex(/^[1-9]\d{9}$/, 'Invalid phone number'),
   name: z.string().min(2),
   role: z.enum(['admin', 'doctor', 'staff']),
   tenantId: z.string().optional(),
