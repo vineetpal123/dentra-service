@@ -1,0 +1,5 @@
+PORT=8000
+MONGO_URI=mongodb+srv://dentra_user:geto_saturo@cluster0.i6w9pil.mongodb.net/?appName=Cluster0
+JWT_SECRET=supersecretkey
+
+
