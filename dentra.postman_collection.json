@@ -1,0 +1,624 @@
+{
+  "info": {
+    "_postman_id": "c971f467-06aa-4889-81f3-42e89000420f",
+    "name": "dentra",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "11612096",
+    "_collection_link": "https://go.postman.co/collection/11612096-c971f467-06aa-4889-81f3-42e89000420f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"mobile\": \"1234567891\",\r\n    \"name\": \"Dr. Peter\",\r\n    \"role\": \"doctor\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/users",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/users?page=1&limit=2",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete user",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/users/69da1415636716c0b984f4a3",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "users",
+                "69da1415636716c0b984f4a3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Saturo\",\r\n    \"role\": \"staff\",\r\n    \"isDeleted\": \"false\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/users/69da1415636716c0b984f4a3",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "users",
+                "69da1415636716c0b984f4a3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "otp",
+      "item": [
+        {
+          "name": "send-otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"mobile\": \"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/send-otp",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "send-otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-otp",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "",
+                  "// Try common token field names",
+                  "const token =",
+                  "    res.token ||",
+                  "    res.access_token ||",
+                  "    res.accessToken ||",
+                  "    (res.data && (res.data.token || res.data.access_token || res.data.accessToken)) ||",
+                  "    null;",
+                  "",
+                  "if (token) {",
+                  "    pm.environment.set(\"token\", token);",
+                  "    console.log(\"Token saved to environment:\", token);",
+                  "} else {",
+                  "    console.warn(\"Token not found in response. Check the response structure.\", res);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"mobile\": \"\", \"otp\": \"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/verify-otp",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "verify-otp"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Patients",
+      "item": [
+        {
+          "name": "GEt Patients",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/patients?page=1&limit=2&search=rahul",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "patients"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "2"
+                },
+                {
+                  "key": "search",
+                  "value": "rahul"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Patients",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Sameer\",\r\n    \"phone\": \"9876543211\",\r\n    \"age\": 30\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/patients",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "patients"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GEt Patients By Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/patients/69da326879edad6fd3e1fced",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                "69da326879edad6fd3e1fced"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update patients",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Rahul kumar\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/patients/69da326879edad6fd3e1fced",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                "69da326879edad6fd3e1fced"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete patients",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/patients/69da326879edad6fd3e1fced",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "patients",
+                "69da326879edad6fd3e1fced"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Appointments",
+      "item": [
+        {
+          "name": "Get Appointments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/appointments",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create appointments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"patient\": {\r\n    \"name\": \"Rahul\",\r\n    \"phone\": \"9876543210\"\r\n  },\r\n  \"doctorId\": \"\",\r\n  \"patientId\": \"\",\r\n  \"date\": \"\",\r\n  \"startTime\": \"\",\r\n  \"endTime\": \"\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/appointments",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "appointments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Appointments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/appointments/69da556bc9a2e75ec920e6fb/cancel",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "appointments",
+                "69da556bc9a2e75ec920e6fb",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Appointments By Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": " {{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}api/v1/appointments/69da556bc9a2e75ec920e6fb",
+              "host": [
+                "{{BASE_URL}}api"
+              ],
+              "path": [
+                "v1",
+                "appointments",
+                "69da556bc9a2e75ec920e6fb"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Get Dashboard",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Get Business Hours",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Get Settings",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
