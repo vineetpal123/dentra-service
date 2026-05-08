@@ -21,11 +21,18 @@ export const getPatientsQuerySchema = z.object({
   page: z.coerce.number().optional(),
   limit: z.coerce.number().optional(),
   search: z.string().optional(),
+  name: z.string().optional(),
+  phone: z.string().optional(),
 });
 
 // PARAM
 export const patientParamSchema = z.object({
   id: z.string(),
+});
+
+// PARAM
+export const patientIdentifyParamSchema = z.object({
+  phone: z.string(),
 });
 
 export type CreatePatientSchema = z.infer<typeof createPatientSchema>;

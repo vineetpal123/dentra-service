@@ -31,15 +31,23 @@ export const getPatients = async (request: any, reply: FastifyReply) => {
   try {
     const currentUser = request.user;
 
-    const { page = 1, limit = 10, search } = request.query;
-
+    const { page = 1, limit = 10, name, phone } = request.query;
+    console.log(
+      'Fetching patients with query:',
+      request.query,
+      'for tenant:',
+      currentUser.tenantId,
+    );
     const query: any = {
       tenantId: currentUser.tenantId,
       isDeleted: false,
     };
 
-    if (search) {
-      query.name = { $regex: search, $options: 'i' };
+    if (name) {
+      query.name = { $regex: name, $options: 'i' };
+    }
+    if (phone) {
+      query.phone = { $regex: phone, $options: 'i' };
     }
 
     const patients = await Patient.find(query)
@@ -50,6 +58,33 @@ export const getPatients = async (request: any, reply: FastifyReply) => {
     const total = await Patient.countDocuments(query);
 
     return reply.send(successResponse('Api successful', { patients, total, page, limit }));
+  } catch (err) {
+    return reply.status(500).send(errorResponse('Server error', ERROR_CODES.SERVER_ERROR));
+  }
+};
+
+export const getPatientByPhone = async (request: any, reply: FastifyReply) => {
+  try {
+    const currentUser = request.user;
+
+    const { phone } = request.query;
+
+    const query: any = {
+      tenantId: currentUser.tenantId,
+      isDeleted: false,
+    };
+
+    if (phone) {
+      query.phone = { $regex: phone, $options: 'i' };
+    }
+
+    console.log('patients found with phone:', phone, query);
+
+    const patients = await Patient.find(query).limit(1).sort({ createdAt: -1 });
+
+    console.log('patients found with phone:', phone, patients);
+    const message = patients.length > 0 ? 'Patient fetched successfully' : 'No patient found ';
+    return reply.send(successResponse(message, { patient: patients[0] }));
   } catch (err) {
     return reply.status(500).send(errorResponse('Server error', ERROR_CODES.SERVER_ERROR));
   }

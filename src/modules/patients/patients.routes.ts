@@ -2,6 +2,7 @@ import {
   createPatient,
   deletePatient,
   getPatientById,
+  getPatientByPhone,
   getPatients,
   updatePatient,
 } from './patients.controller';
@@ -13,6 +14,7 @@ import { validate } from '../../utils/validate';
 import {
   createPatientSchema,
   getPatientsQuerySchema,
+  patientIdentifyParamSchema,
   patientParamSchema,
   updatePatientSchema,
 } from './schemas/patient.schema';
@@ -48,6 +50,14 @@ export default async function (fastify: any) {
       preHandler: [authMiddleware, validate(patientParamSchema, 'params')],
     },
     getPatientById,
+  );
+
+  fastify.get(
+    '/patients/identify',
+    {
+      preHandler: [authMiddleware, validate(patientIdentifyParamSchema, 'query')],
+    },
+    getPatientByPhone,
   );
 
   fastify.put(
